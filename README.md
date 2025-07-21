@@ -2,6 +2,10 @@
 
 READMEはApp.vueに書く。
 
+以下はViteのテンプレートのREADME.md。
+
+--------------------
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
