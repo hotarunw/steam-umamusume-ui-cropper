@@ -1,12 +1,11 @@
 <template>
-  <v-container class="pb-16">
+  <v-container>
     <v-row justify="center">
       <v-col cols="12" md="8">
         <v-card class="mb-4">
-          <v-card-title>Image Cropper</v-card-title>
+          <v-card-title>Steam版ウマ娘 UI切り取りメーカー</v-card-title>
           <v-card-text>
-            Drag and drop PNG/JPEG images or click to select files. The images will be cropped to a
-            specific width range.
+            Steam版ウマ娘で左右の白いUI部分を切り取るツール。レシート因子メーカーに突っ込む等用。
           </v-card-text>
         </v-card>
 
@@ -88,13 +87,12 @@
         </v-col>
 
         <v-card>
+          <v-card-title>※</v-card-title>
           <v-card-text>
-            ※Download
-            Allボタンで複数のファイルをまとめてダウンロードするには、ブラウザの設定で自動ダウンロードを許可する必要があります。
-          </v-card-text>
-          <v-card-text>
-            クロップ範囲は(横幅*148/1920)（小数点切り上げ）から(横幅*958/1920)（小数点切り上げ）-1pxの範囲としている。
-            1920x1080では、148から957までの範囲に相当する。いくつかの解像度で試したが動いている。
+            Download
+            Allボタンで複数のファイルをまとめてダウンロードするには、ブラウザの設定で自動ダウンロードを許可する必要があります。<br />
+            クロップ範囲は(横幅*148/1920)（小数点切り上げ）から(横幅*958/1920)（小数点切り上げ）-1pxの範囲としている。<br />
+            画像の横幅が1920px未満の場合は、横幅の1/2をクロップ範囲とする。いくつかの解像度で試したが、正しく切り取れている。
           </v-card-text>
         </v-card>
 
