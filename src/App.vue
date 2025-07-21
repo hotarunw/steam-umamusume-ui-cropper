@@ -1,116 +1,120 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="12" md="8">
-        <v-card class="mb-4">
-          <v-card-title>Steam版ウマ娘 UI切り取りメーカー</v-card-title>
-          <v-card-text>
-            Steam版ウマ娘で左右の白いUI部分を切り取るツール。レシート因子メーカーに突っ込む等用。
-          </v-card-text>
-        </v-card>
+  <v-app>
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="12" md="8" style="background-color: white">
+          <v-card class="mb-4" border>
+            <v-card-title class="text-wrap"
+              >Steam版ウマ娘 UI切り取りメーカー / Steam Umamusume UI Cropper</v-card-title
+            >
+            <v-card-text>
+              Steam版ウマ娘で左右の白いUI部分を切り取るツール。レシート因子メーカーに突っ込む等用。
+            </v-card-text>
+          </v-card>
 
-        <v-file-upload
-          v-model="model"
-          multiple
-          accept="image/png, image/jpeg"
-          show-size
-          scrim="primary"
-          density="comfortable"
-          title="Drag and Drop PNG/JPEG or Click to Select"
-          @update:model-value="handleUpload"
-        >
-          <template v-slot:item="{ file: itemFile, props: itemProps }">
-            <v-file-upload-item v-bind="itemProps" lines="one" nav>
-              <template v-slot:prepend>
-                <v-avatar class="avatar" rounded />
-              </template>
-              <template v-slot:append>
-                <div>
-                  <v-col class="d-flex flex-column ga-2">
-                    <v-btn
-                      color="primary"
-                      prepend-icon="mdi-download"
-                      size="large"
-                      @click="() => handleDownload(itemFile)"
-                    >
-                      Download
-                    </v-btn>
-                    <v-btn
-                      color="primary"
-                      prepend-icon="mdi-clipboard-text"
-                      size="large"
-                      @click="() => handleCopyToClipboard(itemFile)"
-                    >
-                      Clipboard
-                    </v-btn>
-                  </v-col>
-                </div>
-              </template>
-            </v-file-upload-item>
-          </template>
-        </v-file-upload>
-
-        <v-col class="d-flex flex-column ga-2">
-          <v-btn
-            color="primary"
-            prepend-icon="mdi-clipboard-text"
-            size="large"
-            @click="handlePasteFromClipboard"
-            width="100%"
+          <v-file-upload
+            v-model="model"
+            multiple
+            accept="image/png, image/jpeg"
+            show-size
+            scrim="primary"
+            density="comfortable"
+            title="Drag and Drop PNG/JPEG or Click to Select"
+            @update:model-value="handleUpload"
           >
-            Paste from Clipboard
-          </v-btn>
+            <template v-slot:item="{ file: itemFile, props: itemProps }">
+              <v-file-upload-item v-bind="itemProps" lines="one" nav>
+                <template v-slot:prepend>
+                  <v-avatar class="avatar" rounded />
+                </template>
+                <template v-slot:append
+                  >;
+                  <div>
+                    <v-col class="d-flex flex-column ga-2">
+                      <v-btn
+                        color="primary"
+                        prepend-icon="mdi-download"
+                        size="large"
+                        @click="() => handleDownload(itemFile)"
+                      >
+                        Download
+                      </v-btn>
+                      <v-btn
+                        prepend-icon="mdi-clipboard-text"
+                        size="large"
+                        @click="() => handleCopyToClipboard(itemFile)"
+                        border
+                      >
+                        Clipboard
+                      </v-btn>
+                    </v-col>
+                  </div>
+                </template>
+              </v-file-upload-item>
+            </template>
+          </v-file-upload>
 
-          <v-btn
+          <v-col class="d-flex flex-column ga-2">
+            <v-btn
+              prepend-icon="mdi-clipboard-text"
+              size="large"
+              @click="handlePasteFromClipboard"
+              width="100%"
+              border
+            >
+              Paste from Clipboard
+            </v-btn>
+
+            <v-btn
+              color="error"
+              prepend-icon="mdi-close-circle"
+              size="large"
+              @click="handleDeleteAll"
+              width="100%"
+              :disabled="model.length === 0"
+            >
+              Delete All
+            </v-btn>
+
+            <v-divider />
+
+            <v-btn
+              color="primary"
+              prepend-icon="mdi-download"
+              size="large"
+              @click="handleDownloadAll"
+              width="100%"
+              :disabled="model.length === 0"
+            >
+              Download All
+            </v-btn>
+          </v-col>
+
+          <v-card border>
+            <v-card-title>※</v-card-title>
+            <v-card-text>
+              Download
+              Allボタンで複数のファイルをまとめてダウンロードするには、ブラウザの設定で自動ダウンロードを許可する必要があります。<br />
+              クロップ範囲は(横幅*148/1920)（小数点切り上げ）から(横幅*958/1920)（小数点切り上げ）-1pxの範囲としている。<br />
+              画像の横幅が1920px未満の場合は、横幅の1/2をクロップ範囲とする。いくつかの解像度で試したが、正しく切り取れている。
+            </v-card-text>
+          </v-card>
+
+          <v-snackbar-queue
+            v-model="successSnackbar"
+            :timeout="3000"
+            color="success"
+            location="top right"
+          />
+          <v-snackbar-queue
+            v-model="errorSnackbar"
+            :timeout="3000"
             color="error"
-            prepend-icon="mdi-close-circle"
-            size="large"
-            @click="handleDeleteAll"
-            width="100%"
-            :disabled="model.length === 0"
-          >
-            Delete All
-          </v-btn>
-
-          <v-divider />
-
-          <v-btn
-            color="primary"
-            prepend-icon="mdi-download"
-            size="large"
-            @click="handleDownloadAll"
-            width="100%"
-            :disabled="model.length === 0"
-          >
-            Download All
-          </v-btn>
+            location="top right"
+          />
         </v-col>
-
-        <v-card>
-          <v-card-title>※</v-card-title>
-          <v-card-text>
-            Download
-            Allボタンで複数のファイルをまとめてダウンロードするには、ブラウザの設定で自動ダウンロードを許可する必要があります。<br />
-            クロップ範囲は(横幅*148/1920)（小数点切り上げ）から(横幅*958/1920)（小数点切り上げ）-1pxの範囲としている。<br />
-            画像の横幅が1920px未満の場合は、横幅の1/2をクロップ範囲とする。いくつかの解像度で試したが、正しく切り取れている。
-          </v-card-text>
-        </v-card>
-
-        <v-snackbar-queue
-          v-model="successSnackbar"
-          :timeout="3000"
-          color="success"
-          location="top right"
-        />
-        <v-snackbar-queue
-          v-model="errorSnackbar"
-          :timeout="3000"
-          color="error"
-          location="top right"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
+      </v-row> </v-container
+  ></v-app>
 </template>
 
 <script setup lang="ts">
@@ -248,6 +252,7 @@ onUnmounted(() => {
 
 onErrorCaptured((error) => {
   errorSnackbar.value.push(`Error: ${error.message}`);
+  console.error(error.message);
 });
 </script>
 

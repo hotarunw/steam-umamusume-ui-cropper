@@ -9,6 +9,7 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import { aliases, mdi } from 'vuetify/iconsets/mdi';
 import 'vuetify/styles';
+import { myCustomLightTheme } from './theme';
 
 const vuetify = createVuetify({
   components: {
@@ -22,6 +23,12 @@ const vuetify = createVuetify({
     aliases,
     sets: {
       mdi,
+    },
+  },
+  theme: {
+    defaultTheme: 'myCustomLightTheme',
+    themes: {
+      myCustomLightTheme,
     },
   },
 });
