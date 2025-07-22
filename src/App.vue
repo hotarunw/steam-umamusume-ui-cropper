@@ -95,8 +95,8 @@
             <v-card-text>
               Download
               Allボタンで複数のファイルをまとめてダウンロードするには、ブラウザの設定で自動ダウンロードを許可する必要があります。<br />
-              クロップ範囲は(横幅*148/1920)（小数点切り上げ）から(横幅*958/1920)（小数点切り上げ）-1pxの範囲としている。<br />
-              画像の横幅が1920px未満の場合は、横幅の1/2をクロップ範囲とする。いくつかの解像度で試したが、正しく切り取れている。
+              クロップ範囲は(横幅*148/1920)（四捨五入）から(横幅*958/1920)（四捨五入）-1pxの範囲としている。<br />
+              1920x1080では、148から957までの範囲に相当する。いくつかの解像度で試したが動いている。
             </v-card-text>
           </v-card>
 
@@ -119,7 +119,7 @@
 
 <script setup lang="ts">
 import { onErrorCaptured, onMounted, onUnmounted, ref } from 'vue';
-import { getCropRange } from './calcCropWidth';
+import { getCropRange } from './getCropRange';
 
 const model = ref<File[]>([]);
 let pastModel: File[] = [];
