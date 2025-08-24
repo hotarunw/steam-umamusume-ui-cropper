@@ -2,6 +2,8 @@
 
 READMEはApp.vueに書く。
 
+アイコン：[twitter/twemoji: Emoji for everyone\. https://twemoji\.twitter\.com/](https://github.com/twitter/twemoji)
+
 以下はViteのテンプレートのREADME.md。
 
 --------------------

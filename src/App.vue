@@ -7,88 +7,97 @@
             <v-card-title class="text-wrap"
               >Steam版ウマ娘 UI切り取りメーカー / Steam Umamusume UI Cropper</v-card-title
             >
-            <v-card-text>
-              Steam版ウマ娘で左右の白いUI部分を切り取るツール。レシート因子メーカーに突っ込む等用。
-            </v-card-text>
+            <v-card-text> Steam版ウマ娘で左右の白いUI部分の内側を切り取るツール。 </v-card-text>
           </v-card>
 
-          <v-file-upload
-            v-model="model"
+          <v-file-input
+            v-model="inputFiles"
             multiple
-            accept="image/png, image/jpeg"
-            show-size
-            scrim="primary"
-            density="comfortable"
-            title="Drag and Drop PNG/JPEG or Click to Select"
+            label="ここにファイルをドロップ OR ファイル選択 OR Ctrl + Vで貼り付け"
             @update:model-value="handleUpload"
+            accept="image/png, image/jpeg"
+          />
+
+          <v-btn
+            color="secondary"
+            prepend-icon="mdi-clipboard-text"
+            size="large"
+            @click="handlePasteFromClipboard"
           >
-            <template v-slot:item="{ file: itemFile, props: itemProps }">
-              <v-file-upload-item v-bind="itemProps" lines="one" nav>
-                <template v-slot:prepend>
-                  <v-avatar class="avatar" rounded />
-                </template>
-                <template v-slot:append
-                  >;
-                  <div>
-                    <v-col class="d-flex flex-column ga-2">
-                      <v-btn
-                        color="primary"
-                        prepend-icon="mdi-download"
-                        size="large"
-                        @click="() => handleDownload(itemFile)"
-                      >
-                        Download
-                      </v-btn>
-                      <v-btn
-                        prepend-icon="mdi-clipboard-text"
-                        size="large"
-                        @click="() => handleCopyToClipboard(itemFile)"
-                        border
-                      >
-                        Clipboard
-                      </v-btn>
-                    </v-col>
-                  </div>
-                </template>
-              </v-file-upload-item>
-            </template>
-          </v-file-upload>
+            クリップボードから貼り付け
+          </v-btn>
 
-          <v-col class="d-flex flex-column ga-2">
-            <v-btn
-              prepend-icon="mdi-clipboard-text"
-              size="large"
-              @click="handlePasteFromClipboard"
-              width="100%"
-              border
-            >
-              Paste from Clipboard
-            </v-btn>
+          <v-divider class="my-4" />
 
-            <v-btn
-              color="error"
-              prepend-icon="mdi-close-circle"
-              size="large"
-              @click="handleDeleteAll"
-              width="100%"
-              :disabled="model.length === 0"
-            >
-              Delete All
-            </v-btn>
+          <v-checkbox
+            v-model="isCropNarrowEnabled"
+            color="primary"
+            label="中のモーダルを切り取る"
+            hide-details="auto"
+          ></v-checkbox>
 
-            <v-divider />
+          <v-row
+            ><v-col>
+              <v-btn
+                color="primary"
+                prepend-icon="mdi-download"
+                size="large"
+                @click="handleDownloadAll"
+                width="100%"
+                :disabled="storeFiles.length === 0"
+              >
+                Download All
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                color="error"
+                prepend-icon="mdi-close-circle"
+                size="large"
+                @click="handleDeleteAll"
+                width="100%"
+                :disabled="storeFiles.length === 0"
+              >
+                Delete All
+              </v-btn>
+            </v-col></v-row
+          >
+          <v-divider class="my-4" />
 
-            <v-btn
-              color="primary"
-              prepend-icon="mdi-download"
-              size="large"
-              @click="handleDownloadAll"
-              width="100%"
-              :disabled="model.length === 0"
-            >
-              Download All
-            </v-btn>
-          </v-col>
+          <v-row v-for="(value, index) in filesUrl" :key="value">
+            <v-col> <v-img :src="value" height="256px" :width="(256 * 16) / 9" /></v-col>
+            <v-col>
+              <v-btn
+                color="primary"
+                prepend-icon="mdi-download"
+                size="large"
+                width="100%"
+                @click="handleDownload(storeFiles[index])"
+                class="mb-3"
+              >
+                Download
+              </v-btn>
+              <v-btn
+                color="secondary"
+                prepend-icon="mdi-download"
+                size="large"
+                width="100%"
+                @click="handleCopyToClipboard(storeFiles[index])"
+                class="mb-3"
+              >
+                Copy to Clipboard
+              </v-btn>
+              <v-btn
+                color="error"
+                prepend-icon="mdi-close-circle"
+                size="large"
+                width="100%"
+                @click="handleDelete(storeFiles[index])"
+              >
+                Delete
+              </v-btn>
+            </v-col>
+          </v-row>
 
           <v-card border>
             <v-card-title>※</v-card-title>
@@ -118,23 +127,22 @@
 </template>
 
 <script setup lang="ts">
-import { onErrorCaptured, onMounted, onUnmounted, ref } from 'vue';
-import { getCropRange } from './getCropRange';
+import { computed, onErrorCaptured, onMounted, onUnmounted, ref } from 'vue';
+import { getCropRange, getCropRangeNarrow } from './getCropRange';
 
-const model = ref<File[]>([]);
-let pastModel: File[] = [];
+const inputFiles = ref<File[]>([]);
+const storeFiles = ref<File[]>([]);
 const successSnackbar = ref<string[]>([]);
 const errorSnackbar = ref<string[]>([]);
+const isCropNarrowEnabled = ref<boolean>(false);
 
-const handleUpload = (files: File[]) => {
-  if (files.length === 0) {
-    pastModel = model.value;
-    return;
+const handleUpload = (files: File | File[]) => {
+  if (Array.isArray(files)) {
+    storeFiles.value.push(...files);
+  } else {
+    storeFiles.value.push(files);
   }
-  // ファイルを追加したとき、過去のファイルとマージする
-  // 行ごとに削除できるようにしたいが、マージとの整合性を保つのが難しいので機能追加しない
-  model.value = [...pastModel, ...files];
-  pastModel = model.value;
+  inputFiles.value = [];
 };
 
 const handlePasteFromClipboard = async () => {
@@ -158,8 +166,12 @@ const handlePasteFromClipboard = async () => {
 const addImageFile = (blob: Blob, type: string) => {
   const fileName = `clipboard_${Date.now()}.${type === 'image/png' ? 'png' : 'jpg'}`;
   const file = new File([blob], fileName, { type });
-  model.value.push(file);
+  storeFiles.value.push(file);
 };
+
+const filesUrl = computed(() => {
+  return storeFiles.value.map((file) => URL.createObjectURL(file));
+});
 
 const cropImageFile = (file: File): Promise<File> => {
   return new Promise<File>((resolve, reject) => {
@@ -168,12 +180,14 @@ const cropImageFile = (file: File): Promise<File> => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const [cropX, cropWidth] = getCropRange(img.width);
+        const [cropX, cropWidth, cropY, cropHeight] = isCropNarrowEnabled.value
+          ? getCropRangeNarrow(img.width, img.height)
+          : getCropRange(img.width, img.height);
         canvas.width = cropWidth;
-        canvas.height = img.height;
+        canvas.height = cropHeight;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-          ctx.drawImage(img, cropX, 0, cropWidth, canvas.height, 0, 0, cropWidth, canvas.height);
+          ctx.drawImage(img, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
           canvas.toBlob((blob) => {
             if (blob) {
               const croppedFile = new File([blob], file.name, { type: file.type });
@@ -194,6 +208,7 @@ const cropImageFile = (file: File): Promise<File> => {
   });
 };
 
+// 単体系
 const handleDownload = async (file: File) => {
   try {
     const croppedFile = await cropImageFile(file);
@@ -223,9 +238,15 @@ const handleCopyToClipboard = async (file: File) => {
   }
 };
 
+const handleDelete = (file: File) => {
+  storeFiles.value = storeFiles.value.filter((f) => f !== file);
+  successSnackbar.value.push(`Deleted: ${file.name}`);
+};
+
+// ALL系
 const handleDownloadAll = async () => {
   try {
-    for (const file of model.value) {
+    for (const file of storeFiles.value) {
       await handleDownload(file);
     }
     successSnackbar.value.push('All files downloaded successfully');
@@ -237,8 +258,7 @@ const handleDownloadAll = async () => {
 };
 
 const handleDeleteAll = () => {
-  model.value = [];
-  pastModel = [];
+  storeFiles.value = [];
   successSnackbar.value.push('All files deleted successfully');
 };
 
@@ -256,9 +276,4 @@ onErrorCaptured((error) => {
 });
 </script>
 
-<style scoped>
-.avatar {
-  width: 192px;
-  height: 108px;
-}
-</style>
+<style scoped></style>

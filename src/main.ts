@@ -1,5 +1,4 @@
 import { createApp } from 'vue';
-import { VFileUpload, VFileUploadItem } from 'vuetify/labs/VFileUpload';
 import App from './App.vue';
 
 // Vuetifyのインポート
@@ -12,11 +11,7 @@ import 'vuetify/styles';
 import { myCustomLightTheme } from './theme';
 
 const vuetify = createVuetify({
-  components: {
-    ...components,
-    VFileUpload,
-    VFileUploadItem,
-  },
+  components,
   directives,
   icons: {
     defaultSet: 'mdi',
