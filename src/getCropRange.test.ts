@@ -1,7 +1,6 @@
 import { expect, test } from 'vitest';
 import { getCropRange, getCropRangeNarrow } from './getCropRange';
 
-// TODO: hogehoge
 test('getCropRange', () => {
   expect(getCropRange(1920, 1080)).toEqual([148, 958 - 148, 0, 1080]);
   expect(getCropRange(1650, (1650 * 9) / 16)).toEqual([127, 823 - 127, 0, (1650 * 9) / 16]);
@@ -10,7 +9,7 @@ test('getCropRange', () => {
 });
 
 test('getCropRangeNarrow', () => {
-  expect(getCropRangeNarrow(1920, 1080)).toEqual([256, 850 - 256, 0, 1080]);
-  expect(getCropRangeNarrow(1451, (1451 * 9) / 16)).toEqual([206, 682 - 206, 0, (1451 * 9) / 16]);
-  expect(getCropRangeNarrow(1463, (1463 * 9) / 16)).toEqual([230, 761 - 230, 0, (1463 * 9) / 16]);
+  expect(getCropRangeNarrow(1920, 1080)).toEqual([256, 850 - 256, 27, 1056 - 27]);
+  expect(getCropRangeNarrow(1495, 841)).toEqual([199, 662 - 199, 21, 822 - 21]);
+  expect(getCropRangeNarrow(1497, 842)).toEqual([199, 663 - 199, 21, 823 - 21]);
 });

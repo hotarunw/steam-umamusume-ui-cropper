@@ -2,7 +2,7 @@
   <v-app>
     <v-container>
       <v-row justify="center">
-        <v-col cols="12" md="8" style="background-color: white">
+        <v-col cols="12" md="10" style="background-color: white">
           <v-card class="mb-4" border>
             <v-card-title class="text-wrap"
               >Steam版ウマ娘 UI切り取りメーカー / Steam Umamusume UI Cropper</v-card-title
@@ -32,7 +32,7 @@
           <v-checkbox
             v-model="isCropNarrowEnabled"
             color="primary"
-            label="中のモーダルを切り取る"
+            label="さらに中の縦長のダイアログを切り取る"
             hide-details="auto"
           ></v-checkbox>
 
@@ -62,45 +62,47 @@
               </v-btn>
             </v-col></v-row
           >
+
+          <div v-for="(value, index) in filesUrl" :key="value">
+            <v-divider class="my-4" />
+            <span>{{ storeFiles[index].name }}</span>
+            <v-row>
+              <v-col cols="8"> <v-img :src="value" /></v-col>
+              <v-col cols="4">
+                <v-btn
+                  color="primary"
+                  prepend-icon="mdi-download"
+                  size="large"
+                  @click="handleDownload(storeFiles[index])"
+                  class="mb-3"
+                  width="100%"
+                  >Download
+                </v-btn>
+                <v-btn
+                  color="secondary"
+                  prepend-icon="mdi-clipboard-text"
+                  size="large"
+                  @click="handleCopyToClipboard(storeFiles[index])"
+                  class="mb-3"
+                  width="100%"
+                  >Copy
+                </v-btn>
+                <v-btn
+                  color="error"
+                  prepend-icon="mdi-close-circle"
+                  size="large"
+                  @click="handleDelete(storeFiles[index])"
+                  class="mb-3"
+                  width="100%"
+                  >Delete
+                </v-btn>
+              </v-col></v-row
+            >
+          </div>
+
           <v-divider class="my-4" />
-
-          <v-row v-for="(value, index) in filesUrl" :key="value">
-            <v-col> <v-img :src="value" height="256px" :width="(256 * 16) / 9" /></v-col>
-            <v-col>
-              <v-btn
-                color="primary"
-                prepend-icon="mdi-download"
-                size="large"
-                width="100%"
-                @click="handleDownload(storeFiles[index])"
-                class="mb-3"
-              >
-                Download
-              </v-btn>
-              <v-btn
-                color="secondary"
-                prepend-icon="mdi-download"
-                size="large"
-                width="100%"
-                @click="handleCopyToClipboard(storeFiles[index])"
-                class="mb-3"
-              >
-                Copy to Clipboard
-              </v-btn>
-              <v-btn
-                color="error"
-                prepend-icon="mdi-close-circle"
-                size="large"
-                width="100%"
-                @click="handleDelete(storeFiles[index])"
-              >
-                Delete
-              </v-btn>
-            </v-col>
-          </v-row>
-
           <v-card border>
-            <v-card-title>※</v-card-title>
+            <v-card-title>※メモ</v-card-title>
             <v-card-text>
               Download
               Allボタンで複数のファイルをまとめてダウンロードするには、ブラウザの設定で自動ダウンロードを許可する必要があります。<br />
