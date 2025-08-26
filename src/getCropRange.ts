@@ -4,6 +4,13 @@ export const getCropRange = (width: number, height: number): [number, number, nu
   return [minCropX, maxCropX - minCropX, 0, height];
 };
 
+const roundByThreshold = (value: number, threshold: number): number => {
+  const integerPart = Math.floor(value);
+  const decimalPart = value - integerPart;
+
+  return decimalPart >= threshold ? integerPart + 1 : integerPart;
+};
+
 export const getCropRangeNarrow = (
   width: number,
   height: number
@@ -13,11 +20,4 @@ export const getCropRangeNarrow = (
   const minCropY = Math.round((height * 27) / 1080);
   const maxCropY = Math.round((height * 1056) / 1080);
   return [minCropX, maxCropX - minCropX, minCropY, maxCropY - minCropY];
-};
-
-const roundByThreshold = (value: number, threshold: number): number => {
-  const integerPart = Math.floor(value);
-  const decimalPart = value - integerPart;
-
-  return decimalPart >= threshold ? integerPart + 1 : integerPart;
 };

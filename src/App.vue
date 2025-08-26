@@ -20,7 +20,7 @@
 
           <v-btn
             color="secondary"
-            prepend-icon="mdi-clipboard-text"
+            prepend-icon="mdi-content-copy"
             size="large"
             @click="handlePasteFromClipboard"
           >
